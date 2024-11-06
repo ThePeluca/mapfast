@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #000; /* Cor de fundo da página em preto */
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 10px 0;
+}
+
+h1 {
+    color: #FFFF00; /* Cor do título do mapa em amarelo */
+    text-align: center;
+}
+
+nav ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin: 0 15px;
+}
+
+nav ul li a {
+    color: #fff;
+    text-decoration: none;
+}
+
+main {
+    padding: 20px;
+}
+
+#map {
+    height: 600px; /* Altura do mapa */
+    width: 100%; /* Largura do mapa */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    margin-top: 20px; /* Margem superior do mapa */
+}
+
+h2 {
+    color: #FFFF00; /* Cor do título do formulário em amarelo */
+    text-align: center;
+}
+
+form {
+    margin-top: 20px;
+    background-color: #444; /* Cor de fundo do formulário */
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+
+form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #f3f30b; /* Cor dos rótulos em amarelo */
+}
+
+form input, form textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+form button {
+    background-color: #4CAF50; /* Cor do botão */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Largura total do botão */
+}
+
+form button:hover {
+    background-color: #45a049; /* Cor do botão ao passar o mouse */
+}
+
+p {
+    color: #f3f30b; /* Cor do nome em amarelo */
+}
+
+footer {
+    background-color: #232404;
+    color: #fde404;
+    text-align: center;
+    padding: 10px 0;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+}
+
+/* Estilos para a seção de busca */
+#busca {
+    width: calc(100% - 22px); /* Ajusta a largura para compensar o padding */
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#btn-buscar {
+    background-color: #4CAF50; /* Cor do botão de busca */
+    color: white;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    width: 100%; /* Largura total do botão */
+}
+
+#btn-buscar:hover {
+    background-color: #45a049; /* Cor do botão de busca ao passar o mouse */
+}
