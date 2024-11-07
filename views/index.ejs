@@ -1,111 +1,101 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Mapa com Google Maps</title>
-    <link rel="stylesheet" href="/style.css">
+    <link rel="stylesheet" href="/style.css" />
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC4WkJZD0vJ6oeK2frbptNIVJWuvtu5zhc"></script>
-</head>
-<body>
+  </head>
+  <body>
     <header>
-        <h1>MAP FAST</h1>
-        <nav>
-            <ul>
-                <li><a href="#home">Início</a></li>
-                <li><a href="#map">Mapa</a></li>
-                <li><a href="sobre.html" target="_blank">Sobre</a></li>
-                <li><a href="#contact">Contato</a></li>
-            </ul>
-        </nav>
+      <h1>MAP FAST</h1>
+      <nav>
+        <ul>
+          <li><a href="#home">Início</a></li>
+          <li><a href="#map">Mapa</a></li>
+          <li><a href="sobre.html" target="_blank">Sobre</a></li>
+          <li><a href="#contact">Contato</a></li>
+        </ul>
+      </nav>
     </header>
 
     <main>
-        <div id="map"></div>
-        
-        <h2>Cadastro de Desfibriladores</h2>
-        <form id="cadastro-desfibrilador">
-            <label for="nome">Nome do Desfibrilador:</label>
-            <input type="text" id="nome" name="nome" required>
+      <h2>Buscar Desfibriladores</h2>
+      <input
+        type="text"
+        id="busca"
+        placeholder="Digite o nome do desfibrilador"
+      />
+      <button id="btn-buscar">Buscar</button>
 
-            <label for="endereco">Endereço:</label>
-            <input type="text" id="endereco" name="endereco" required>
+      <div id="map"></div>
 
-            <label for="informacoes">Informações Adicionais:</label>
-            <textarea id="informacoes" name="informacoes" rows="4"></textarea>
-
-            <button type="submit">Cadastrar Desfibrilador</button>
-        </form>
-
-        <h2>Buscar Desfibriladores</h2>
-        <input type="text" id="busca" placeholder="Digite o nome do desfibrilador">
-        <button id="btn-buscar">Buscar</button>
-
-        <p>Por: Pedro Lucas Rodrigues Reis e Guilherme Jorge</p>
+      <p>Por: Pedro Lucas Rodrigues Reis e Guilherme Jorge</p>
     </main>
 
     <footer>
-        <p>&copy; 2024 Map Fast. Todos os direitos reservados.</p>
+      <p>&copy; 2024 Map Fast. Todos os direitos reservados.</p>
     </footer>
     <script>
-        // Lista todos os desfibriladores cadastrados no mapa 
-        const desfribiladors = [
-            <% desfribiladors.forEach(d => { %>
-                {
-                    nome: '<%= d.nome %>',
-                    cidade: '<%= d.cidade %>',
-                    bairro: '<%= d.bairro %>',
-                    rua: '<%= d.rua %>',
-                    numero: '<%= d.numero %>',
-                    informacoes: '<%= d.informacoes %>',
-                    latitude: '<%= d.latitude %>',
-                    longitude: '<%= d.longitude %>'
-                },
-            <% }) %>
-        ];
+      // Lista todos os desfibriladores cadastrados no mapa
+      const desfribiladors = [
+          <% desfribiladors.forEach(d => { %>
+              {
+                  nome: '<%= d.nome %>',
+                  cidade: '<%= d.cidade %>',
+                  bairro: '<%= d.bairro %>',
+                  rua: '<%= d.rua %>',
+                  numero: '<%= d.numero %>',
+                  informacoes: '<%= d.informacoes %>',
+                  latitude: '<%= d.latitude %>',
+                  longitude: '<%= d.longitude %>'
+              },
+          <% }) %>
+      ];
 
-        // Inicializa o mapa
-        function initMap() {
-            const map = new google.maps.Map(document.getElementById("map"), {
-                zoom: 12,
-                center: { lat: -16.7353, lng: -43.8481 },
-                scrollwheel: true,
-            });
+      // Inicializa o mapa
+      function initMap() {
+          const map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 12,
+              center: { lat: -16.7353, lng: -43.8481 },
+              scrollwheel: true,
+          });
 
-            const infowindow = new google.maps.InfoWindow(); // Criando o InfoWindow
+          const infowindow = new google.maps.InfoWindow(); // Criando o InfoWindow
 
-            // Adiciona um marcador para cada desfibrilador
-            desfribiladors.forEach(d => {
-                const marker = new google.maps.Marker({
-                    position: { lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) },
-                    map,
-                    title: d.nome,
-                });
+          // Adiciona um marcador para cada desfibrilador
+          desfribiladors.forEach(d => {
+              const marker = new google.maps.Marker({
+                  position: { lat: parseFloat(d.latitude), lng: parseFloat(d.longitude) },
+                  map,
+                  title: d.nome,
+              });
 
-                // Quando o marcador for clicado, exibe as informações
-                google.maps.event.addListener(marker, 'click', function() {
-                    // Concatenando o endereço completo
-                    const enderecoCompleto = `${d.rua}, ${d.numero}, ${d.bairro}, ${d.cidade}`;
-                    
-                    // Verifique o conteúdo do endereço
-                    console.log(enderecoCompleto); // Debug para verificar o endereço
+              // Quando o marcador for clicado, exibe as informações
+              google.maps.event.addListener(marker, 'click', function() {
+                  // Concatenando o endereço completo
+                  const enderecoCompleto = `${d.rua}, ${d.numero}, ${d.bairro}, ${d.cidade}`;
 
-                    const contentString = `
-                        <div>
-                            <h3>${d.nome}</h3>
-                            <p><strong>Endereço:</strong> ${enderecoCompleto || 'Endereço não informado'}</p>
-                            <p><strong>Informações adicionais:</strong> ${d.informacoes || 'Sem informações adicionais'}</p>
-                        </div>
-                    `;
+                  // Verifique o conteúdo do endereço
+                  console.log(enderecoCompleto); // Debug para verificar o endereço
 
-                    infowindow.setContent(contentString);
-                    infowindow.open(map, marker); // Exibe o infowindow no mapa
-                });
-            });
-        }
+                  const contentString = `
+                      <div>
+                          <h3>${d.nome}</h3>
+                          <p><strong>Endereço:</strong> ${enderecoCompleto || 'Endereço não informado'}</p>
+                          <p><strong>Informações adicionais:</strong> ${d.informacoes || 'Sem informações adicionais'}</p>
+                      </div>
+                  `;
 
-        // Chama a função para inicializar o mapa
-        initMap();
+                  infowindow.setContent(contentString);
+                  infowindow.open(map, marker); // Exibe o infowindow no mapa
+              });
+          });
+      }
+
+      // Chama a função para inicializar o mapa
+      initMap();
     </script>
-</body>
+  </body>
 </html>
