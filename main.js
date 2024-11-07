@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const sqlite3 = require('sqlite3').verbose(); // Usando sqlite3
+const { Client } = require('pg'); // Usando pg para PostgreSQL
 const cors = require('cors');
 const path = require('path');
 
@@ -16,38 +16,43 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Configurar a conexão com o banco de dados SQLite
-const db = new sqlite3.Database('./database.db', (err) => { // Conexão com o banco SQLite
+// Configurar a conexão com o banco de dados PostgreSQL
+const client = new Client({
+    connectionString: 'postgres://default:Ft7RevzkB0nP@ep-solitary-mode-a4wbee0i.us-east-1.aws.neon.tech:5432/verceldb?sslmode=require',
+});
+
+client.connect((err) => {
     if (err) {
-        console.error('Erro ao conectar ao banco de dados SQLite:', err.message);
+        console.error('Erro ao conectar ao banco de dados PostgreSQL:', err.stack);
         return;
     }
-    console.log('Conectado ao banco de dados SQLite');
+    console.log('Conectado ao banco de dados PostgreSQL');
 });
 
 // Configurar a rota para renderizar index.ejs com dados do banco
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM desfribiladors';
-    db.all(sql, [], (err, rows) => {
+    client.query(sql, (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.render('index', { desfribiladors: rows });
+        res.render('index', { desfribiladors: result.rows });
     });
 });
 
 // Rota para cadastrar desfibriladores
 app.post('/cadastrar', (req, res) => {
     const { nome, endereco, informacoes, latitude, longitude } = req.body;
-    const sql = 'INSERT INTO desfribiladors (nome, endereco, informacoes, latitude, longitude) VALUES (?, ?, ?, ?, ?)';
+    const sql = 'INSERT INTO desfribiladors (nome, endereco, informacoes, latitude, longitude) VALUES ($1, $2, $3, $4, $5) RETURNING id';
+    const values = [nome, endereco, informacoes, latitude, longitude];
 
-    db.run(sql, [nome, endereco, informacoes, latitude, longitude], function (err) {
+    client.query(sql, values, (err, result) => {
         if (err) {
             res.status(500).json({ error: err.message });
             return;
         }
-        res.status(200).json({ message: 'Desfibrilador cadastrado com sucesso!', id: this.lastID });
+        res.status(200).json({ message: 'Desfibrilador cadastrado com sucesso!', id: result.rows[0].id });
     });
 });
 
