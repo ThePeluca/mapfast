@@ -12,7 +12,7 @@
   
   
     "scripts": {
-      "start": "node views/index.ejs",
+      "start": "node main.js",
       "test": "echo \"error: no test specified\" && exit 1",
       "dev": "nodemon"
     }
