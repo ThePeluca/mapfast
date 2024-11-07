@@ -17,7 +17,7 @@ app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
 // Configurar a conexão com o banco de dados SQLite
-const db = new sqlite3.Database('./database.db', (err) => { // Conexão com o banco SQLite
+const db = new sqlite3.Database('database.db', (err) => { // Conexão com o banco SQLite
     if (err) {
         console.error('Erro ao conectar ao banco de dados SQLite:', err.message);
         return;
