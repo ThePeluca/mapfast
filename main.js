@@ -1,6 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const mysql = require('mysql2');
+const sqlite3 = require('sqlite3').verbose(); // Usando sqlite3
 const cors = require('cors');
 const path = require('path');
 
@@ -16,45 +16,38 @@ app.use(bodyParser.json());
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
 
-// Configurar a conexão com o banco de dados
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',     // seu usuário do MySQL
-    password: '', // sua senha do MySQL
-    database: 'desfibriladors' // nome do seu banco de dados
-});
-
-// Conectar ao banco de dados
-db.connect(err => {
+// Configurar a conexão com o banco de dados SQLite
+const db = new sqlite3.Database('./database.db', (err) => { // Conexão com o banco SQLite
     if (err) {
-        console.error('Erro ao conectar ao banco de dados: ' + err.stack);
+        console.error('Erro ao conectar ao banco de dados SQLite:', err.message);
         return;
     }
-    console.log('Conectado ao banco de dados MySQL como id ' + db.threadId);
+    console.log('Conectado ao banco de dados SQLite');
 });
 
 // Configurar a rota para renderizar index.ejs com dados do banco
 app.get('/', (req, res) => {
     const sql = 'SELECT * FROM desfribiladors';
-
-    db.query(sql, (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: error.message });
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
         }
-        res.render('index', { desfribiladors: results });
+        res.render('index', { desfribiladors: rows });
     });
 });
 
 // Rota para cadastrar desfibriladores
 app.post('/cadastrar', (req, res) => {
     const { nome, endereco, informacoes, latitude, longitude } = req.body;
+    const sql = 'INSERT INTO desfribiladors (nome, endereco, informacoes, latitude, longitude) VALUES (?, ?, ?, ?, ?)';
 
-    const sql = 'INSERT INTO desfibriladores (nome, endereco, informacoes, latitude, longitude) VALUES (?, ?, ?, ?, ?)';
-    db.query(sql, [nome, endereco, informacoes, latitude, longitude], (error, results) => {
-        if (error) {
-            return res.status(500).json({ error: error.message });
+    db.run(sql, [nome, endereco, informacoes, latitude, longitude], function (err) {
+        if (err) {
+            res.status(500).json({ error: err.message });
+            return;
         }
-        res.status(200).json({ message: 'Desfibrilador cadastrado com sucesso!', id: results.insertId });
+        res.status(200).json({ message: 'Desfibrilador cadastrado com sucesso!', id: this.lastID });
     });
 });
 
