@@ -23,12 +23,16 @@
 
     <main>
       <h2>Buscar Desfibriladores</h2>
-      <input
-        type="text"
-        id="busca"
-        placeholder="Digite o nome do desfibrilador"
-      />
-      <button id="btn-buscar">Buscar</button>
+      <form id="busca-desfibrilador">
+        <input
+          type="text"
+          id="busca"
+          name="busca"
+          placeholder="Digite o nome do desfibrilador"
+          required
+        />
+        <button id="btn-buscar">Buscar</button>
+      </form>
 
       <div id="map"></div>
 

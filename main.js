@@ -34,7 +34,14 @@ client.connect((err) => {
 
 // Configurar a rota para renderizar index.ejs com dados do banco
 app.get("/", (req, res) => {
-  const sql = "SELECT * FROM desfribiladors";
+
+  let sql = "";
+  if (req.query.busca) {
+    sql = `SELECT * FROM desfribiladors WHERE nome ILIKE '%${req.query.busca}%' OR cidade ILIKE '%${req.query.busca}%' OR bairro ILIKE '%${req.query.busca}%' OR rua ILIKE '%${req.query.busca}%' OR numero ILIKE '%${req.query.busca}%'`;
+  } else {
+    sql = "SELECT * FROM desfribiladors";
+  }
+
   client.query(sql, (err, result) => {
     if (err) {
       res.status(500).json({ error: err.message });
