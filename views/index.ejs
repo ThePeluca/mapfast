@@ -24,14 +24,24 @@
     <main>
       <h2>Buscar Desfibriladores</h2>
       <form id="busca-desfibrilador">
+        <% if (busca) { %>
+        <input
+          type="hidden"
+          id="busca"
+          name="busca"
+          placeholder="Digite o nome do desfibrilador"
+          value=""
+        />
+        <button id="btn-buscar">Limpar Filtro</button>
+        <% } else { %>
         <input
           type="text"
           id="busca"
           name="busca"
           placeholder="Digite o nome do desfibrilador"
-          required
         />
         <button id="btn-buscar">Buscar</button>
+        <% } %>
       </form>
 
       <div id="map"></div>

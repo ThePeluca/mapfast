@@ -47,7 +47,10 @@ app.get("/", (req, res) => {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.render("index", { desfribiladors: result.rows });
+    res.render("index", { 
+        desfribiladors: result.rows,
+        busca: req.query.busca
+    });
   });
 });
 
