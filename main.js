@@ -34,7 +34,6 @@ client.connect((err) => {
 
 // Configurar a rota para renderizar index.ejs com dados do banco
 app.get("/", (req, res) => {
-
   let sql = "";
   if (req.query.busca) {
     sql = `SELECT * FROM desfribiladors WHERE nome ILIKE '%${req.query.busca}%' OR cidade ILIKE '%${req.query.busca}%' OR bairro ILIKE '%${req.query.busca}%' OR rua ILIKE '%${req.query.busca}%' OR numero ILIKE '%${req.query.busca}%'`;
@@ -47,40 +46,36 @@ app.get("/", (req, res) => {
       res.status(500).json({ error: err.message });
       return;
     }
-    res.render("index", { 
-        desfribiladors: result.rows,
-        busca: req.query.busca
+    res.render("index", {
+      desfribiladors: result.rows,
+      busca: req.query.busca,
     });
   });
 });
 
 // Rota para cadastrar desfibriladores
 app.post("/cadastrar", async (req, res) => {
-  const { nome, cidade, bairro, rua, numero } = req.body; // extraímos os dados da requisição
+  const { nome, cidade, bairro, rua, numero, estado, cep } = req.body; // extraímos os dados da requisição
 
-  // Configuração da requisição para a API de geolocalização
+  // Configuração da requisição para a API de geolocalização do Google
   const options = {
     method: "GET",
-    url: "https://api.opencagedata.com/geocode/v1/json",
+    url: "https://maps.googleapis.com/maps/api/geocode/json",
     params: {
-      q: `${rua}, ${numero}, ${bairro}, ${cidade}, Brazil`, // Formatação do endereço
-      key: "03c48dae07364cabb7f121d8c1519492", // Sua chave de API
-      no_annotations: "1",
-      language: "en",
+      address: `${rua} ${numero}, ${bairro}, ${cidade}, ${estado}, ${cep}`,
+      key: "AIzaSyDB4Z02pk4O1AxJX2d5kEkdotedSF14-hQ", // Sua chave de API do Google
     },
     headers: {
       "Content-Type": "application/json",
       "User-Agent":
         "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36",
-      authority: "www.latlong.net",
-      origin: "https://www.latlong.net",
     },
   };
 
   try {
     // Faz a requisição para obter as coordenadas
     const response = await axios.request(options);
-    const { lat, lng } = response.data.results[0]?.bounds?.northeast || {}; // Adicionando checagem para valores indefinidos
+    const { lat, lng } = response.data.results[0]?.geometry?.location || {}; // Adicionando checagem para valores indefinidos
 
     const longitude = lng || 0; // Valor padrão em caso de erro
     const latitude = lat || 0; // Valor padrão em caso de erro
@@ -100,9 +95,9 @@ app.post("/cadastrar", async (req, res) => {
 
     // SQL para inserir os dados no banco
     const sql = `
-        INSERT INTO desfribiladors (nome, cidade, bairro, rua, numero, latitude, longitude, "createdAt", "updatedAt", status)
-        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
-      `;
+          INSERT INTO desfribiladors (nome, cidade, bairro, rua, numero, latitude, longitude, "createdAt", "updatedAt", status)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+        `;
 
     // Executando a query no banco de dados
     await client.query(sql, values);

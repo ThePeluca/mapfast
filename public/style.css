@@ -63,7 +63,7 @@ form label {
     color: #f3f30b; /* Cor dos rótulos em amarelo */
 }
 
-form input, form textarea {
+form input, form textarea, form select {
     width: 100%;
     padding: 10px;
     margin-bottom: 15px;
